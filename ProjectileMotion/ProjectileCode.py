@@ -11,7 +11,6 @@ import sys
 import numpy as np
 import pygame
 import pygame as pg
-from pygame.examples.music_drop_fade import VOLUME_CHANGE_AMOUNT
 
 #sys and pygame setup
 pygame.init()
@@ -24,6 +23,7 @@ dt = clock.tick(fps) / 1000.0
 t = 0
 VarChoice = True
 Shoot = False
+prevMouseClick = False
 
 #colours
 Red = (255, 0, 0)
@@ -31,10 +31,12 @@ Green = (0, 255, 0)
 Blue = (0, 0, 255)
 White = (255, 255, 255)
 Black = (0, 0, 0)
-Yellow = (255, 255, 0)
+darkGreen = (0,200,0)
+darkRed = (200,0,0)
+darkBlue = (0,0,200)
 
 #math vars
-g = 9.81
+g = 0
 Vo = 0
 #Vpres
 thetao = 0
@@ -48,26 +50,7 @@ distancefin = 2*((Vo*np.sin(thetao))/g)*Vo*np.cos(thetao)
 heightpres = (Vo*np.sin(thetao)) -(0.5)*(g)*(t*t)
 heightmax = (Vo*np.sin(thetao))*((Vo*np.sin(thetao))/(g)) - (0.5)*(g)*(((Vo*np.sin(thetao))/g)**2)
 t += dt
-'''x2t = f"X position relative to centre = {x2fake:.2f}"
-    y2t = f"Y position relative to centre = {y2fake:.2f}"
-    Vot = f"Vo = {Vo:.2f} (885 ≈ equilibrium)"
-    Rt = f"R length = {R:.1f}"
-    θt = f"radians = {θ:.2f}"
 
-    def doText():
-        text_surfaceθ = my_font.render(θt, True, (0, 0, 0))
-        text_surfaceVo = my_font.render(Vot, True, (0, 0, 0))
-        text_surfaceRt = my_font.render(Rt, True, (0, 0, 0))
-        text_surfacex2 = my_font.render(x2t, True, (0, 0, 0))
-        text_surfacey2 = my_font.render(y2t, True, (0, 0, 0))
-
-        screen.blit(text_surfaceVo, (10, 10))
-        screen.blit(text_surfaceθ, (10, 50))
-        screen.blit(text_surfaceRt, (10, 90))
-        screen.blit(text_surfacex2, (800, 10))
-        screen.blit(text_surfacey2, (800, 50))
-        rectangle = pygame.Rect(x, y, width, height)
-        pygame.draw.rect(window, color, rectangle)'''
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
 my_fontinc = pg.font.SysFont(pg.font.get_default_font(), 50)
@@ -79,6 +62,12 @@ p = "+"
 m = "-"
 #functions
 def TextMake():
+    gt = f'Gravity Value = {g:5f}'
+    Vot = f'Initial Velocity = {Vo:2f}'
+    thetaot = f'Launch Angle = {thetao:2f}'
+
+    p = "+"
+    m = "-"
     #make text
     TextSurfaceG = my_font.render(gt, True, Black)
     TextSurfaceVo = my_font.render(Vot, True, Black)
@@ -99,23 +88,17 @@ def TextMake():
     screen.blit(mt, (89, 92))
     screen.blit(mt, (89, 152))
 
-def buttons():
-    #create Rects
-    VoButtonp = pg.Rect(10, 30, 50, 40)
-    gButtonp = pg.Rect(10, 90, 50, 40)
-    ThetaoButtonp = pg.Rect(10, 150, 50, 40)
+#create Rects
+gButtonp = pg.Rect(10, 30, 50, 40)
+VoButtonp = pg.Rect(10, 90, 50, 40)
+ThetaoButtonp = pg.Rect(10, 150, 50, 40)
 
-    VoButtonm = pg.Rect(70, 30, 50, 40)
-    gButtonm = pg.Rect(70, 90, 50, 40)
-    ThetaoButtonm = pg.Rect(70, 150, 50, 40)
+gButtonm = pg.Rect(70, 30, 50, 40)
+VoButtonm = pg.Rect(70, 90, 50, 40)
+ThetaoButtonm = pg.Rect(70, 150, 50, 40)
 
-    #draw rects
-    pg.draw.rect(screen, Green, VoButtonp)
-    pg.draw.rect(screen, Green, gButtonp)
-    pg.draw.rect(screen, Green, ThetaoButtonp)
-    pg.draw.rect(screen, Red, VoButtonm)
-    pg.draw.rect(screen, Red, gButtonm)
-    pg.draw.rect(screen, Red, ThetaoButtonm)
+StartButton = pg.Rect(10, 250, 100, 100)
+
 #loops
 while VarChoice:
     for event in pygame.event.get():
@@ -124,16 +107,68 @@ while VarChoice:
             pg.quit()
             sys.exit()
     screen.fill(White)
+    #mouse stuff
+    mousePos = pg.mouse.get_pos()
+    mouseClick = pg.mouse.get_pressed()
+    mousePress = mouseClick and not prevMouseClick
+    prevMouseClick = mouseClick
+    #buttons
 
+    def handle_buttonG(rect, action):
+        color = Green
+        if rect.collidepoint(mousePos):
+            color = darkGreen
+            if mousePress:
+                action()
+        pg.draw.rect(screen, color, rect)
+    def handle_buttonR(rect, action):
+        color = Red
+        if rect.collidepoint(mousePos):
+            color = darkRed
+            if mousePress:
+                action()
+        pg.draw.rect(screen, color, rect)
+    def handle_buttonS(rect, action):
+        color = Blue
+        if rect.collidepoint(mousePos):
+            color = darkBlue
+            if mousePress:
+                action()
+        pg.draw.rect(screen, color, rect)
     #input
     keys = pg.key.get_pressed()
-    if pg.mouse.get_pressed()[0]:
-        pos = pg.mouse.get_pos()
-    if keys[pg.K_s]:
+    #funcs
+    def Fire():
         VarChoice = False
         Shoot = True
+    def Vop():
+        global Vo
+        Vo += 1
+    def Vom():
+        global Vo
+        Vo -= 1
+    def Gp():
+        global g
+        g += 1
+    def Gm():
+        global g
+        g -= 1
+    def thetaop():
+        global thetao
+        thetao += 1
+    def thetaom():
+        global thetao
+        thetao -= 1
     #draw
-    buttons()#BUTTONS HAVE TO BE DRAWN BEFORE TEXT so plus and minus are drawn on top
+    handle_buttonG(VoButtonp, Vop)
+    handle_buttonG(gButtonp, Gp)
+    handle_buttonG(ThetaoButtonp, thetaop)
+
+    handle_buttonR(VoButtonm, Vom)
+    handle_buttonR(gButtonm, Gm)
+    handle_buttonR(ThetaoButtonm, thetaom)
+
+    handle_buttonS(StartButton, Fire)
     TextMake()
     pg.display.flip()
 while Shoot:
