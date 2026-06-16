@@ -3,7 +3,7 @@
     Projectile Motion project. This will be my second project in python now so I should have a better idea of what I am doing.
     I planned to make a game sort of thing using the projectile motion physics so it should not be hard at all. I will use no AI for this project.
     *Also i most likely won't use matplotlib cause its hard and a very big package to run for demo.
-    *update on what game actually is
+    Have nearly completed physics now but I just want to make sure the timing is right, then I might make a game out of it.
 '''
 
 #imports
@@ -47,25 +47,32 @@ y1 = 500
 xpres = x1
 ypres = y1
 distancepres = Vo*np.cos(thetao)*t
-distancefin = 2*((Vo*np.sin(thetao))/g)*Vo*np.cos(thetao)
-heightpres = (Vo*np.sin(thetao)) -(0.5)*(g)*(t*t)
+heightpres = 0
 heightmax = (Vo*np.sin(thetao))*((Vo*np.sin(thetao))/(g)) - (0.5)*(g)*(((Vo*np.sin(thetao))/g)**2)
-t += dt
+t = 0
 
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
 my_fontinc = pg.font.SysFont(pg.font.get_default_font(), 50)
-gt = f'Gravity Value = {g:5f}'
-Vot = f'Initial Velocity = {Vo:2f}'
-thetaot = f'Launch Angle = {thetao:2f}'
+gt = f"Gravity Value = {g:.2f}"
+Vot = f"Initial Velocity = {Vo:.1f} m/s"
+thetaot = f"Launch Angle = {np.degrees(thetao):.1f}°"
+
+distanceprest = f"Distance = {distancepres:.2f} m"
+heightprest = f"Height = {heightpres:.2f} m"
+thetaprest = f"Angle of travel = {thetapres:.1f}°"
 
 p = "+"
 m = "-"
 #functions
 def TextMake():
-    gt = f'Gravity Value = {g:5f}'
-    Vot = f'Initial Velocity = {Vo:2f}'
-    thetaot = f'Launch Angle = {np.degrees(thetao):.1f}°'
+    gt = f"Gravity Value = {g:.2f}"
+    Vot = f"Initial Velocity = {Vo:.1f} m/s"
+    thetaot = f"Launch Angle = {np.degrees(thetao):.1f}°"
+
+    distanceprest = f"Distance = {distancepres:.2f} m"
+    heightprest = f"Height = {heightpres:.2f} m"
+    thetaprest = f"Angle of travel = {thetapres:.1f}°"
 
     p = "+"
     m = "-"
@@ -73,6 +80,9 @@ def TextMake():
     TextSurfaceG = my_font.render(gt, True, Black)
     TextSurfaceVo = my_font.render(Vot, True, Black)
     TextSurfaceThetao = my_font.render(thetaot, True, Black)
+    TextSurfacedPres = my_font.render(distanceprest, True, Black)
+    TextSurfacehPres = my_font.render(heightprest, True, Black)
+    TextSurfaceThetaprest = my_font.render(thetaprest, True, Black)
 
     pt = my_fontinc.render(p, True, Black)
     mt = my_fontinc.render(m, True, Black)
@@ -81,6 +91,9 @@ def TextMake():
     screen.blit(TextSurfaceG, (10, 10))
     screen.blit(TextSurfaceVo, (10, 70))
     screen.blit(TextSurfaceThetao, (10, 130))
+    screen.blit(TextSurfacedPres, (500,10))
+    screen.blit(TextSurfacehPres, (500, 50))
+    screen.blit(TextSurfaceThetaprest, (500, 90))
 
     screen.blit(pt, (25, 30))
     screen.blit(pt, (25, 90))
@@ -100,12 +113,15 @@ VoButtonm = pg.Rect(70, 90, 50, 40)
 ThetaoButtonm = pg.Rect(70, 150, 50, 40)
 
 StartButton = pg.Rect(10, 250, 100, 100)
+EndButton = pg.Rect(10, 350, 100, 100)
 
 #loops
 while VarChoice:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             VarChoice = False
+            Shoot = False
+            End = False
             pg.quit()
             sys.exit()
     screen.fill(White)
@@ -114,8 +130,14 @@ while VarChoice:
     mouseClick = pg.mouse.get_pressed()[0]
     mousePress = mouseClick and not prevMouseClick
     prevMouseClick = mouseClick
+    #reset vars
+    t = 0
+    xpres = x1
+    ypres = y1
+    distancepres = 0
+    heightpres = 0
+    thetapres = np.degrees(thetao)
     #buttons
-
     def handle_buttonG(rect, action):
         color = Green
         if rect.collidepoint(mousePos):
@@ -150,18 +172,14 @@ while VarChoice:
     def Vop():
         global Vo
         Vo += 1
-        Vo = max(0.1, Vo - 1)
     def Vom():
         global Vo
-        Vo -= 1
         Vo = max(0.1, Vo - 1)
     def Gp():
         global g
         g += 0.1
-        g = max(0.1, g - 0.1)
     def Gm():
         global g
-        g -= 0.1
         g = max(0.1, g - 0.1)
     def thetaop():
         global thetao
@@ -179,7 +197,7 @@ while VarChoice:
     handle_buttonR(ThetaoButtonm, thetaom)
 
     pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
-    pg.draw.line(screen, Black, (x1, y1), (x1 + 500, y1), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1 + 800, y1), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
 
     handle_buttonS(StartButton, Fire)
@@ -193,18 +211,21 @@ while Shoot:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             VarChoice = False
+            Shoot = False
+            End = False
             pg.quit()
             sys.exit()
 
     screen.fill(White)
     # calc
-    thetapres += thetao
     xpres = x1 + SCALE * Vo * np.cos(thetao) * t
     ypres = y1 - SCALE * (Vo * np.sin(thetao) * t - 0.5 * g * t ** 2)
-    thetapres = np.arctan2(ypres - y1, xpres - x1)
+    vx = Vo * np.cos(thetao)
+    vy = Vo * np.sin(thetao) - g * t
+    thetapres = np.degrees(np.arctan2(vy, vx))
 
     pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
-    pg.draw.line(screen, Black, (x1,y1), (x1 + 500,y1), 5)
+    pg.draw.line(screen, Black, (x1,y1), (x1 + 800,y1), 5)
     pg.draw.line(screen, Black, (x1,y1), (x1,y1 - 300), 5)
 
     pg.draw.rect(screen, Green, VoButtonp)
@@ -216,27 +237,47 @@ while Shoot:
     pg.draw.rect(screen, Red, gButtonm)
     TextMake()
 
-    # distancepres = Vo * np.cos(thetao) * t
-    # heightpres = (Vo * np.sin(thetao)) - (0.5) * (g) * (t * t)
+    distancepres = vx * t
+    heightpres = (y1 - ypres) / SCALE
 
     if t > 0 and ypres >= y1:
         ypres = y1
         Shoot = False
         End = True
     t += dt
-    clock.tick(fps)
     pg.display.flip()
 while End:
+    mousePos = pg.mouse.get_pos()
+    mouseClick = pg.mouse.get_pressed()[0]
+    mousePress = mouseClick and not prevMouseClick
+    prevMouseClick = mouseClick
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             VarChoice = False
+            Shoot = False
+            End = False
             pg.quit()
             sys.exit()
 
     screen.fill(White)
+    def handle_buttonS(rect, action):
+        color = Blue
+        if rect.collidepoint(mousePos):
+            color = darkBlue
+            if mousePress:
+                action()
+        pg.draw.rect(screen, color, rect)
 
+    def New():
+        global End, VarChoice
+        VarChoice = True
+        End = False
+
+
+    heightpres = int(np.round((y1 - ypres) / SCALE))
+    thetapres = int(np.round(thetapres))
     pg.draw.circle(screen, Black, (xpres, ypres), 5)
-    pg.draw.line(screen, Black, (x1, y1), (x1 + 500, y1), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1 + 800, y1), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
 
     pg.draw.rect(screen, Green, VoButtonp)
@@ -246,6 +287,9 @@ while End:
     pg.draw.rect(screen, Red, VoButtonm)
     pg.draw.rect(screen, Red, ThetaoButtonm)
     pg.draw.rect(screen, Red, gButtonm)
+
+    pg.draw.rect(screen, Blue, EndButton)
+    handle_buttonS(EndButton, New)
     TextMake()
 
     pg.display.flip()
