@@ -23,6 +23,7 @@ dt = clock.tick(fps) / 1000.0
 t = 0
 VarChoice = True
 Shoot = False
+End = False
 prevMouseClick = False
 
 #colours
@@ -36,15 +37,15 @@ darkRed = (200,0,0)
 darkBlue = (0,0,200)
 
 #math vars
-g = 0
-Vo = 0
-#Vpres
-thetao = 0
-#thetapres
+SCALE = 10# 10 pixels=1m
+g = 9.81
+Vo = 20
+thetao = np.radians(45)
+thetapres = 0
 x1 = 200
 y1 = 500
-xpres = Vo*np.cos(thetao)*t + x1
-ypres = (Vo*np.sin(thetao)) -(0.5)*(g)*(t*t) + y1
+xpres = x1
+ypres = y1
 distancepres = Vo*np.cos(thetao)*t
 distancefin = 2*((Vo*np.sin(thetao))/g)*Vo*np.cos(thetao)
 heightpres = (Vo*np.sin(thetao)) -(0.5)*(g)*(t*t)
@@ -64,7 +65,7 @@ m = "-"
 def TextMake():
     gt = f'Gravity Value = {g:5f}'
     Vot = f'Initial Velocity = {Vo:2f}'
-    thetaot = f'Launch Angle = {thetao:2f}'
+    thetaot = f'Launch Angle = {np.degrees(thetao):.1f}°'
 
     p = "+"
     m = "-"
@@ -88,6 +89,7 @@ def TextMake():
     screen.blit(mt, (89, 92))
     screen.blit(mt, (89, 152))
 
+
 #create Rects
 gButtonp = pg.Rect(10, 30, 50, 40)
 VoButtonp = pg.Rect(10, 90, 50, 40)
@@ -109,7 +111,7 @@ while VarChoice:
     screen.fill(White)
     #mouse stuff
     mousePos = pg.mouse.get_pos()
-    mouseClick = pg.mouse.get_pressed()
+    mouseClick = pg.mouse.get_pressed()[0]
     mousePress = mouseClick and not prevMouseClick
     prevMouseClick = mouseClick
     #buttons
@@ -139,26 +141,34 @@ while VarChoice:
     keys = pg.key.get_pressed()
     #funcs
     def Fire():
+        global VarChoice, Shoot, t, ypres, xpres
+        t = 0
+        ypres = y1
+        xpres = x1
         VarChoice = False
         Shoot = True
     def Vop():
         global Vo
         Vo += 1
+        Vo = max(0.1, Vo - 1)
     def Vom():
         global Vo
         Vo -= 1
+        Vo = max(0.1, Vo - 1)
     def Gp():
         global g
-        g += 1
+        g += 0.1
+        g = max(0.1, g - 0.1)
     def Gm():
         global g
-        g -= 1
+        g -= 0.1
+        g = max(0.1, g - 0.1)
     def thetaop():
         global thetao
-        thetao += 1
+        thetao += np.radians(1)
     def thetaom():
         global thetao
-        thetao -= 1
+        thetao -= np.radians(1)
     #draw
     handle_buttonG(VoButtonp, Vop)
     handle_buttonG(gButtonp, Gp)
@@ -168,6 +178,10 @@ while VarChoice:
     handle_buttonR(gButtonm, Gm)
     handle_buttonR(ThetaoButtonm, thetaom)
 
+    pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1 + 500, y1), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
+
     handle_buttonS(StartButton, Fire)
     TextMake()
     pg.display.flip()
@@ -176,7 +190,6 @@ while Shoot:
     if dt > 0.1:
         dt = 0.1
 
-    t += dt
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             VarChoice = False
@@ -184,14 +197,56 @@ while Shoot:
             sys.exit()
 
     screen.fill(White)
-    pg.draw.circle(screen, Black, (x1,y1), 5)
+    # calc
+    thetapres += thetao
+    xpres = x1 + SCALE * Vo * np.cos(thetao) * t
+    ypres = y1 - SCALE * (Vo * np.sin(thetao) * t - 0.5 * g * t ** 2)
+    thetapres = np.arctan2(ypres - y1, xpres - x1)
+
+    pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
     pg.draw.line(screen, Black, (x1,y1), (x1 + 500,y1), 5)
     pg.draw.line(screen, Black, (x1,y1), (x1,y1 - 300), 5)
 
+    pg.draw.rect(screen, Green, VoButtonp)
+    pg.draw.rect(screen, Green, ThetaoButtonp)
+    pg.draw.rect(screen, Green, gButtonp)
 
+    pg.draw.rect(screen, Red, VoButtonm)
+    pg.draw.rect(screen, Red, ThetaoButtonm)
+    pg.draw.rect(screen, Red, gButtonm)
+    TextMake()
 
+    # distancepres = Vo * np.cos(thetao) * t
+    # heightpres = (Vo * np.sin(thetao)) - (0.5) * (g) * (t * t)
 
-
+    if t > 0 and ypres >= y1:
+        ypres = y1
+        Shoot = False
+        End = True
+    t += dt
     clock.tick(fps)
+    pg.display.flip()
+while End:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            VarChoice = False
+            pg.quit()
+            sys.exit()
+
+    screen.fill(White)
+
+    pg.draw.circle(screen, Black, (xpres, ypres), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1 + 500, y1), 5)
+    pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
+
+    pg.draw.rect(screen, Green, VoButtonp)
+    pg.draw.rect(screen, Green, ThetaoButtonp)
+    pg.draw.rect(screen, Green, gButtonp)
+
+    pg.draw.rect(screen, Red, VoButtonm)
+    pg.draw.rect(screen, Red, ThetaoButtonm)
+    pg.draw.rect(screen, Red, gButtonm)
+    TextMake()
+
     pg.display.flip()
 pygame.quit()
