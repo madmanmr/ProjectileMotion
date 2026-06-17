@@ -76,6 +76,7 @@ def TextMake():
     heightmaxt = f"Maximum Height= {heightmax:.2f} m"
     timet = f"Flight Time = {t:.2f} s"
     Speed = f"Speed = {speed:.2f} m/s"
+    pointst = f"points = {points:.0f}"
 
     p = "+"
     m = "-"
@@ -89,6 +90,7 @@ def TextMake():
     TextSurfaceheightmaxt = my_font.render(heightmaxt, True, Black)
     TextSurfacett = my_font.render(timet, True, Black)
     TextSurfacespeed = my_font.render(Speed, True, Black)
+    TextSurfacepointst = my_font.render(pointst, True, Yellow)
 
     pt = my_fontinc.render(p, True, Black)
     mt = my_fontinc.render(m, True, Black)
@@ -103,6 +105,7 @@ def TextMake():
     screen.blit(TextSurfaceheightmaxt, (800, 10))
     screen.blit(TextSurfacett, (500, 170))
     screen.blit(TextSurfacespeed, (500, 130))
+    screen.blit(TextSurfacepointst, (800, 50))
 
     screen.blit(pt, (25, 30))
     screen.blit(pt, (25, 90))
@@ -133,22 +136,22 @@ def Fire():
     Shoot = True
 def Vop():
     global Vo
-    Vo += 1
+    Vo = min(40, Vo +1)
 def Vom():
     global Vo
-    Vo = max(0.1, Vo - 1)
+    Vo = max(1, Vo - 1)
 def Gp():
     global g
-    g += 0.1
+    g = min(20, g + 0.1)
 def Gm():
     global g
     g = max(0.1, g - 0.1)
 def thetaop():
     global thetao
-    thetao += np.radians(1)
+    thetao = min(np.radians(89), thetao + np.radians(1))
 def thetaom():
     global thetao
-    thetao -= np.radians(1)
+    thetao = max(np.radians(1), thetao - np.radians(1))
 def elCreato():
     pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
@@ -170,17 +173,17 @@ def Target():
     pg.draw.ellipse(screen, Red, ellipse_rect1)
 
     return ellipse_rect1, ellipse_rect2, ellipse_rect3
-
 def splash(ellipse_rect1, ellipse_rect2, ellipse_rect3):
+    global points
     Splashfx = pg.Rect(xpres - 25, ypres, 50, 5)
     pg.draw.ellipse(screen, Yellow, Splashfx)
 
     if ellipse_rect1.colliderect(Splashfx):
-        print("Bullseye!")
+        points += 50
     elif ellipse_rect2.colliderect(Splashfx):
-        print("Middle hit!")
+        points += 30
     elif ellipse_rect3.colliderect(Splashfx):
-        print("Outer hit!")
+        points += 10
 
 while running:
     #loops
