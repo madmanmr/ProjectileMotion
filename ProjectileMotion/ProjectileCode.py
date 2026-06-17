@@ -4,6 +4,8 @@
     I planned to make a game sort of thing using the projectile motion physics so it should not be hard at all. I will use no AI for this project.
     *Also i most likely won't use matplotlib cause its hard and a very big package to run for demo.
     Have nearly completed physics now but I just want to make sure the timing is right, then I might make a game out of it.
+    Completed physics and timing and everything else is good so now im gonna start with the game, idea is to have a target in a random position
+    with set parameters then give points based on where projectile hits
 '''
 
 #imports
@@ -35,6 +37,7 @@ Black = (0, 0, 0)
 darkGreen = (0,200,0)
 darkRed = (200,0,0)
 darkBlue = (0,0,200)
+Yellow = (255,200,40)
 
 #math vars
 SCALE = 10# 10 pixels=1m
@@ -50,6 +53,11 @@ distancepres = Vo*np.cos(thetao)*t
 heightpres = 0
 heightmax = 0
 speed = 0
+
+#game vars
+points = 0
+Ellx = np.random.randint(400, 1000)
+Elly = y1 - 17.5
 
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
@@ -115,7 +123,6 @@ ThetaoButtonm = pg.Rect(70, 150, 50, 40)
 
 StartButton = pg.Rect(10, 250, 100, 100)
 EndButton = pg.Rect(10, 350, 100, 100)
-#draw rects
 #funcs
 def Fire():
     global VarChoice, Shoot, t, ypres, xpres
@@ -143,7 +150,6 @@ def thetaom():
     global thetao
     thetao -= np.radians(1)
 def elCreato():
-    pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
 
@@ -154,6 +160,28 @@ def elCreato():
     pg.draw.rect(screen, Red, VoButtonm)
     pg.draw.rect(screen, Red, ThetaoButtonm)
     pg.draw.rect(screen, Red, gButtonm)
+def Target():
+    ellipse_rect3 = pg.Rect(Ellx, Elly, 200, 35)
+    ellipse_rect2 = pg.Rect(Ellx + 30, Elly + 7.5, 140, 20)
+    ellipse_rect1 = pg.Rect(Ellx + 50, Elly + 12.5, 100, 10)
+
+    pg.draw.ellipse(screen, Red, ellipse_rect3)
+    pg.draw.ellipse(screen, White, ellipse_rect2)
+    pg.draw.ellipse(screen, Red, ellipse_rect1)
+
+    return ellipse_rect1, ellipse_rect2, ellipse_rect3
+
+def splash(ellipse_rect1, ellipse_rect2, ellipse_rect3):
+    Splashfx = pg.Rect(xpres - 25, ypres, 50, 5)
+    pg.draw.ellipse(screen, Yellow, Splashfx)
+
+    if ellipse_rect1.colliderect(Splashfx):
+        print("Bullseye!")
+    elif ellipse_rect2.colliderect(Splashfx):
+        print("Middle hit!")
+    elif ellipse_rect3.colliderect(Splashfx):
+        print("Outer hit!")
+
 while running:
     #loops
     while VarChoice:
@@ -177,6 +205,7 @@ while running:
         heightpres = 0
         thetapres = np.degrees(thetao)
         heightmax = 0
+
         #buttons
         def handle_buttonG(rect, action):
             color = Green
@@ -209,9 +238,11 @@ while running:
         handle_buttonR(gButtonm, Gm)
         handle_buttonR(ThetaoButtonm, thetaom)
 
-        pg.draw.circle(screen, Black, (int(xpres), int(ypres)), 5)
         pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
         pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
+
+        Target()
 
         handle_buttonS(StartButton, Fire)
         TextMake()
@@ -244,6 +275,8 @@ while running:
         heightpres = (y1 - ypres) / SCALE
 
         elCreato()
+        Target()
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
         TextMake()
 
         # better landing condition
@@ -278,10 +311,11 @@ while running:
             pg.draw.rect(screen, color, rect)
 
         def New():
-            global End, VarChoice, t
+            global End, VarChoice, t, Ellx
             VarChoice = True
             End = False
             t = 0
+            Ellx = np.random.randint(400, 1000)
 
         #making variables what they should be cause i cant think of a way to handle collision without delay
         t = 2 * (Vo*np.sin(thetao)/g)
@@ -290,7 +324,11 @@ while running:
 
         heightpres = int(np.round((y1 - ypres) / SCALE))
         thetapres = int(np.round(thetapres))
+
         elCreato()
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
+        ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
+        splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
 
         pg.draw.rect(screen, Blue, EndButton)
         handle_buttonS(EndButton, New)
