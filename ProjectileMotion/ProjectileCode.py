@@ -5,7 +5,8 @@
     *Also i most likely won't use matplotlib cause its hard and a very big package to run for demo.
     Have nearly completed physics now but I just want to make sure the timing is right, then I might make a game out of it.
     Completed physics and timing and everything else is good so now im gonna start with the game, idea is to have a target in a random position
-    with set parameters then give points based on where projectile hits
+    with set parameters then give points based on where projectile hits.
+    I think the game is basically done now. I have a target now that moves and I have the points based system. blah blah bored of typing you can see for yourself
 '''
 
 #imports
@@ -27,6 +28,7 @@ VarChoice = True
 Shoot = False
 End = False
 prevMouseClick = False
+cheats = False
 
 #colours
 Red = (255, 0, 0)
@@ -38,6 +40,7 @@ darkGreen = (0,200,0)
 darkRed = (200,0,0)
 darkBlue = (0,0,200)
 Yellow = (255,200,40)
+darkYellow = (220,180,20)
 
 #math vars
 SCALE = 10# 10 pixels=1m
@@ -59,6 +62,7 @@ points = 0
 pointsold = 0
 Ellx = np.random.randint(400, 1000)
 Elly = y1 - 17.5
+count = 1
 
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
@@ -81,6 +85,7 @@ def TextMake():
 
     start = "Start"
     restart = "Restart"
+    cheatst = f"Show trajectory (half points) = {cheats:}"
 
     p = "+"
     m = "-"
@@ -94,10 +99,11 @@ def TextMake():
     TextSurfaceheightmaxt = my_font.render(heightmaxt, True, Black)
     TextSurfacett = my_font.render(timet, True, Black)
     TextSurfacespeed = my_font.render(Speed, True, Black)
-    TextSurfacepointst = my_font.render(pointst, True, Yellow)
+    TextSurfacepointst = my_fontinc.render(pointst, True, Yellow)
 
     TextSurfaceStart = my_font.render(start, True, Green)
     TextSurfaceRestart = my_font.render(restart, True, Red)
+    TextSurfacecheat = my_font.render(cheatst, True, darkRed)
 
     pt = my_fontinc.render(p, True, Black)
     mt = my_fontinc.render(m, True, Black)
@@ -116,6 +122,7 @@ def TextMake():
 
     screen.blit(TextSurfaceStart, (10, 220))
     screen.blit(TextSurfaceRestart, (10, 370))
+    screen.blit(TextSurfacecheat, (10, 550))
 
     screen.blit(pt, (25, 30))
     screen.blit(pt, (25, 90))
@@ -136,6 +143,8 @@ ThetaoButtonm = pg.Rect(70, 150, 50, 40)
 
 StartButton = pg.Rect(10, 250, 100, 100)
 EndButton = pg.Rect(10, 400, 100, 100)
+
+cheatButton = pg.Rect(10, 580, 100, 100)
 #funcs
 def Fire():
     global VarChoice, Shoot, t, ypres, xpres
@@ -192,18 +201,51 @@ def splash(ellipse_rect1, ellipse_rect2, ellipse_rect3):
     pg.draw.ellipse(screen, Yellow, Splashfx)
 
     if ellipse_rect1.colliderect(Splashfx) and points == pointsold:
-        points += 50
+        if cheats == True:
+            points += 25
+        else:
+            points += 50
     elif ellipse_rect2.colliderect(Splashfx) and points == pointsold:
-        points += 30
+        if cheats == True:
+            points += 15
+        else:
+            points += 30
     elif ellipse_rect3.colliderect(Splashfx) and points == pointsold:
-        points += 10
+        if cheats == True:
+            points += 5
+        else:
+            points += 10
 def angleLine():
-    l = 100
+    l = 200
     y3 = y1 - (l * np.sin(thetao))
     x3 = x1 + (l * np.cos(thetao))
 
     pg.draw.line(screen, darkGreen, (x1, y1), (x3, y3), 4)
+def parabola():
+    if cheats == True:
+        points = []
+        range_pixels = int((Vo ** 2 * np.sin(2 * thetao) / g) * SCALE)
 
+        for x in range(range_pixels):
+            x_m = x / SCALE
+            y_m = (
+                 x_m * np.tan(thetao)
+                - (g * x_m ** 2)
+                / (2 * Vo ** 2 * np.cos(thetao) ** 2)
+            )
+            screen_x = x1 + x
+            screen_y = y1 - y_m * SCALE
+
+            points.append((screen_x, screen_y))
+        if len(points) > 1:
+            pg.draw.lines(screen, darkRed, False, points, 3)
+def CheatsFunc():
+    global count, cheats
+    count = count * -1
+    if  count == -1:
+        cheats = True
+    else:
+        cheats = False
 while running:
     #loops
     while VarChoice:
@@ -250,6 +292,13 @@ while running:
                 if mousePress:
                     action()
             pg.draw.rect(screen, color, rect)
+        def handle_buttonc(rect, action):
+            color = Red
+            if rect.collidepoint(mousePos):
+                color = darkRed
+                if mousePress:
+                    action()
+            pg.draw.rect(screen, color, rect)
 
         #draw
         handle_buttonG(VoButtonp, Vop)
@@ -260,7 +309,7 @@ while running:
         handle_buttonR(gButtonm, Gm)
         handle_buttonR(ThetaoButtonm, thetaom)
 
-        angleLine()
+        handle_buttonc(cheatButton, CheatsFunc)
 
         pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
         pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
@@ -269,6 +318,9 @@ while running:
         pg.draw.rect(screen, Blue, EndButton)
 
         Target()
+
+        angleLine()
+        parabola()
 
         handle_buttonS(StartButton, Fire)
         TextMake()
@@ -303,6 +355,7 @@ while running:
         elCreato()
         Target()
         angleLine()
+        parabola()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
         TextMake()
 
@@ -356,6 +409,7 @@ while running:
         elCreato()
         ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
         splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
+        parabola()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
 
         pg.draw.rect(screen, Blue, EndButton)
