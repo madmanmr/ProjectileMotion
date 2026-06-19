@@ -6,28 +6,6 @@ The project started as a projectile motion simulator and later evolved into a ga
 
 ---
 
-## Features
-
-- Real-time projectile motion simulation
-- Adjustable:
-  - Gravity
-  - Initial velocity
-  - Launch angle
-- Displays:
-  - Distance travelled
-  - Height
-  - Speed
-  - Flight time
-  - Maximum height
-- Random target generation
-- Scoring system
-- Limited shots
-- Aim Assist mode
-- Game Over screen
-- Restart functionality
-
----
-
 ## Controls
 
 ### Variable Controls
@@ -69,6 +47,21 @@ When Aim Assist is enabled:
 
 ---
 
+## Requirements
+
+Install dependencies:
+
+```bash
+pip install pygame numpy
+```
+
+Run:
+
+```bash
+python main.py
+```
+---
+
 ## Physics Used
 
 ### Horizontal Motion
@@ -100,161 +93,69 @@ R = (v₀² sin(2θ)) / g
 ```python
 T = (2v₀ sin(θ)) / g
 ```
+---
+
+## Development Log
+
+### 14/06/26 – Planning & Physics
+- Revised projectile motion equations.
+- Set up the Pygame window and project structure.
+- Implemented the core projectile motion calculations.
+
+### 15/06/26 – User Interface
+- Added buttons and variable displays.
+- Fixed timing issues so the simulation matched theoretical flight times.
+- Added an end screen and restart system.
+
+### 16/06/26 – Refactoring & Bug Fixes
+- Reorganised the code structure.
+- Fixed several timing and display bugs.
+- Improved variable updates and restart functionality.
+
+### 17/06/26 – Game Features
+- Added a randomly positioned target.
+- Added projectile splash effects.
+- Implemented collision detection.
+- Created a multi-zone scoring system.
+- Added an aiming line.
+
+### 18/06/26 – Aim Assist
+- Added a trajectory prediction parabola.
+- Introduced a score penalty when aim assist is enabled.
+- Improved the overall UI layout.
+
+### 19/06/26 – Final Polish
+- Improved button and screen layouts.
+- Added a Game Over screen.
+- Added final score display and Play Again button.
+- Fixed remaining bugs and completed the project.
 
 ---
 
-## Requirements
+## Features
 
-Install dependencies:
-
-```bash
-pip install pygame numpy
-```
-
-Run:
-
-```bash
-python main.py
-```
-
----
-
-# Development Log
-
-Use this section to record the process of making the project.
+- Adjustable launch velocity
+- Adjustable launch angle
+- Adjustable gravity
+- Accurate projectile motion physics
+- Random target placement
+- Multi-zone scoring system
+- Splash effects
+- Aim assist trajectory prediction
+- Live flight statistics
+- Restart functionality
+- Game Over screen
 
 ---
 
-## Day 1 - Initial Planning
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 2 - Projectile Physics
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 3 - UI and Controls
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 4 - Target System
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 5 - Scoring System
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 6 - Aim Assist
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 7 - Game Over Screen
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Bugs Encountered
-
-| Bug | Cause | Fix |
-|------|--------|-----|
-| | | |
-| | | |
-| | | |
-| | | |
-
----
-
-## Things I Learned
-
-- 
-- 
-- 
-- 
-- 
+## What I Learned
+
+- Projectile motion physics
+- Pygame development
+- Collision detection
+- Real-time simulation
+- UI design
+- Debugging and refactoring
 
 ---
 
@@ -274,6 +175,10 @@ Notes:
 ## Final Thoughts
 
 Write a short reflection here about what went well, what was difficult, and what you would improve if you rebuilt the project.
+This was my second python project and I really enjoyed making more of a game with it. I found using the basic pygame quite simple as I had previously used pygame.
+The scale factor to convert pixels to metres and clock to get all the statistics accurate were a struggle. My code layout was an improvement to my last project however,
+I could make the code much smaller and more efficient. I will try to write a proper plan of my next project on paper before I start coding it to help get the layout right.
+Overall I really enjoyed making this game and I would recommend making physics simulations in python. Hope you enjoy my game :)
 
 
 
