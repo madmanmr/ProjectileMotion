@@ -119,142 +119,67 @@ python main.py
 
 ---
 
-# Development Log
+## Development Log
 
-Use this section to record the process of making the project.
+### 14/06/26 – Planning & Physics
+- Revised projectile motion equations.
+- Set up the Pygame window and project structure.
+- Implemented the core projectile motion calculations.
 
----
+### 15/06/26 – User Interface
+- Added buttons and variable displays.
+- Fixed timing issues so the simulation matched theoretical flight times.
+- Added an end screen and restart system.
 
-## Day 1 - Initial Planning
+### 16/06/26 – Refactoring & Bug Fixes
+- Reorganised the code structure.
+- Fixed several timing and display bugs.
+- Improved variable updates and restart functionality.
 
-Date:
+### 17/06/26 – Game Features
+- Added a randomly positioned target.
+- Added projectile splash effects.
+- Implemented collision detection.
+- Created a multi-zone scoring system.
+- Added an aiming line.
 
-Notes:
+### 18/06/26 – Aim Assist
+- Added a trajectory prediction parabola.
+- Introduced a score penalty when aim assist is enabled.
+- Improved the overall UI layout.
 
-
-
-
-
-
-
-
-
----
-
-## Day 2 - Projectile Physics
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 3 - UI and Controls
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
+### 19/06/26 – Final Polish
+- Improved button and screen layouts.
+- Added a Game Over screen.
+- Added final score display and Play Again button.
+- Fixed remaining bugs and completed the project.
 
 ---
 
-## Day 4 - Target System
+## Features
 
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 5 - Scoring System
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
+- Adjustable launch velocity
+- Adjustable launch angle
+- Adjustable gravity
+- Accurate projectile motion physics
+- Random target placement
+- Multi-zone scoring system
+- Splash effects
+- Aim assist trajectory prediction
+- Live flight statistics
+- Restart functionality
+- Game Over screen
 
 ---
 
-## Day 6 - Aim Assist
+## What I Learned
 
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Day 7 - Game Over Screen
-
-Date:
-
-Notes:
-
-
-
-
-
-
-
-
-
----
-
-## Bugs Encountered
-
-| Bug | Cause | Fix |
-|------|--------|-----|
-| | | |
-| | | |
-| | | |
-| | | |
-
----
-
-## Things I Learned
-
-- 
-- 
-- 
-- 
-- 
+- Projectile motion physics
+- Pygame development
+- Collision detection
+- Real-time simulation
+- UI design
+- Debugging and refactoring
 
 ---
 
