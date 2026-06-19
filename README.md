@@ -49,18 +49,9 @@ When Aim Assist is enabled:
 
 ## Requirements
 
-Install dependencies:
-
-```bash
-pip install pygame numpy
-```
-
-Run:
-
-```bash
-python main.py
-```
----
+How to run:  
+-click this link for web version https://madmanmr.github.io/madmanmr-ProjectileMotion-build-web/
+-install localy (wouldn't recommend doesn't really work)- https://github.com/madmanmr/ProjectileMotion/releases/download/ProjectileMotionGame/ProjectileCode.zip
 
 ## Physics Used
 
