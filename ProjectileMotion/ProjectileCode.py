@@ -6,7 +6,10 @@
     Have nearly completed physics now but I just want to make sure the timing is right, then I might make a game out of it.
     Completed physics and timing and everything else is good so now im gonna start with the game, idea is to have a target in a random position
     with set parameters then give points based on where projectile hits.
-    I think the game is basically done now. I have a target now that moves and I have the points based system. blah blah bored of typing you can see for yourself
+    I think the game is basically done now. I have a target now that moves and I have the points based system.
+    blah blah bored of typing you can see for yourself
+    Game is done now added a game over screen and majorly improved the code layout
+    19/06/26
 '''
 
 #imports
@@ -47,8 +50,6 @@ StartGreenDark = (40, 160, 85)
 CheatGrey = (110, 120, 140)
 CheatGreyDark = (80, 90, 110)
 cheatbcol = CheatGrey
-pluscol = Green
-minuscol = Red
 
 #math vars
 SCALE = 10# 10 pixels=1m
@@ -62,7 +63,6 @@ xpres = x1
 ypres = y1
 distancepres = Vo*np.cos(thetao)*t
 heightpres = 0
-heightmax = 0
 speed = 0
 
 #game vars
@@ -70,7 +70,6 @@ points = 0
 pointsold = 0
 Ellx = np.random.randint(400, 1000)
 Elly = y1 - 17.5
-count = 1
 shots = 5
 
 #restart button
@@ -120,6 +119,26 @@ def Fire():
         VarChoice = False
         Shoot = True
         shots -= 1
+def New():
+    global End, VarChoice, t, Ellx, points, pointsold, cheats
+    VarChoice = True
+    End = False
+    cheats = False
+    t = 0
+    Ellx = np.random.randint(400, 1000)
+    pointsold = points
+def handle_cheat(rect, action):
+    global cheats, cheatbcol
+    if cheats == True:
+        cheatbcol = Green
+    else:
+        cheatbcol = CheatGrey
+    color = cheatbcol
+    if rect.collidepoint(mousePos):
+        color = Green
+        if mousePress:
+            action()
+    pg.draw.rect(screen, color, rect, border_radius=12)
 def Vop():
     global Vo
     Vo = min(40, Vo +1)
@@ -150,7 +169,7 @@ def Target():
     return ellipse_rect1, ellipse_rect2, ellipse_rect3
 def splash(ellipse_rect1, ellipse_rect2, ellipse_rect3):
     global points, pointsold
-    Splashfx = pg.Rect(xpres - 25, ypres, 50, 5)
+    Splashfx = pg.Rect(xpres - 25, ypres-3, 50, 6)
     pg.draw.ellipse(screen, Yellow, Splashfx)
 
     if ellipse_rect1.colliderect(Splashfx) and points == pointsold:
@@ -207,6 +226,13 @@ def PlayAgainfunc():
     Vo = 20
     thetao = np.radians(45)
     speed = 0
+def handleAgain(rect, action):
+    color = StartGreen
+    if rect.collidepoint(mousePos):
+        color = StartGreenDark
+        if mousePress:
+            action()
+    pg.draw.rect(screen, color, rect, border_radius=20)
 def Playagaintext():
     gameovert = "Game Over!"
     playagaint = "Play Again"
@@ -249,8 +275,6 @@ def elCreato():
 
     parabola()
     Target()
-
-    pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
 
     heightmax = (Vo * np.sin(thetao)) ** 2 / (2 * g)
     gt = f"Gravity Value = {g:.2f}"
@@ -334,20 +358,6 @@ while running:
             End = False
             GameOver = True
         #buttons
-        def handle_cheat(rect, action):
-            global cheats, cheatbcol
-            if cheats == True:
-                cheatbcol = Green
-            else:
-                cheatbcol = CheatGrey
-            color = cheatbcol
-            if rect.collidepoint(mousePos):
-                color = Green
-                if mousePress:
-                    action()
-            pg.draw.rect(screen, color, rect, border_radius=12)
-
-        #buttons
         handle_button(VoButtonp, Vop, Green, darkGreen)
         handle_button(gButtonp, Gp, Green, darkGreen)
         handle_button(ThetaoButtonp, thetaop, Green, darkGreen)
@@ -360,6 +370,7 @@ while running:
 
         #drawloop
         elCreato()
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
         #plusminustext
         plusMinusMake()
         pg.display.flip()
@@ -395,6 +406,7 @@ while running:
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         drawrectgrey()
         elCreato()
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
 
         # better landing condition
         if ypres >= y1 and t > 0:
@@ -419,15 +431,6 @@ while running:
                 End = False
 
         screen.fill(White)
-        def New():
-            global End, VarChoice, t, Ellx, points, pointsold, cheats
-            VarChoice = True
-            End = False
-            cheats = False
-            t = 0
-            Ellx = np.random.randint(400, 1000)
-            pointsold = points
-
         #making variables what they should be cause i cant think of a way to handle collision without delay
         t = 2 * (Vo*np.sin(thetao)/g)
         speed = Vo
@@ -436,14 +439,14 @@ while running:
         heightpres = int(np.round((y1 - ypres) / SCALE))
         thetapres = int(np.round(thetapres))
 
-
-        ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
-        splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
         handle_button(EndButton, New, StartGreen, StartGreenDark, 12)
         pg.draw.rect(screen, Blue, StartButton)
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         drawrectgrey()
         elCreato()
+        ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
+        splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
 
         pg.display.flip()
 
@@ -461,15 +464,6 @@ while running:
                 GameOver = False
 
         screen.fill(White)
-
-        def handleAgain(rect, action):
-            color = StartGreen
-            if rect.collidepoint(mousePos):
-                color = StartGreenDark
-                if mousePress:
-                    action()
-            pg.draw.rect(screen, color, rect, border_radius=20)
-
 
         handleAgain(Newgamebutton, PlayAgainfunc)
         Playagaintext()
