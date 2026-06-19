@@ -47,6 +47,21 @@ When Aim Assist is enabled:
 
 ---
 
+## Requirements
+
+Install dependencies:
+
+```bash
+pip install pygame numpy
+```
+
+Run:
+
+```bash
+python main.py
+```
+---
+
 ## Physics Used
 
 ### Horizontal Motion
@@ -78,23 +93,6 @@ R = (v₀² sin(2θ)) / g
 ```python
 T = (2v₀ sin(θ)) / g
 ```
-
----
-
-## Requirements
-
-Install dependencies:
-
-```bash
-pip install pygame numpy
-```
-
-Run:
-
-```bash
-python main.py
-```
-
 ---
 
 ## Development Log
