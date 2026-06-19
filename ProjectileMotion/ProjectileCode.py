@@ -47,6 +47,8 @@ StartGreenDark = (40, 160, 85)
 CheatGrey = (110, 120, 140)
 CheatGreyDark = (80, 90, 110)
 cheatbcol = CheatGrey
+pluscol = Green
+minuscol = Red
 
 #math vars
 SCALE = 10# 10 pixels=1m
@@ -78,7 +80,19 @@ size = [500,200]
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
 my_fontinc = pg.font.SysFont(pg.font.get_default_font(), 50)
 my_fontbig = pg.font.SysFont(pg.font.get_default_font(), 80)
+def plusMinusMake():
+    p = "+"
+    m = "-"
+    pt = my_fontinc.render(p, True, Black)
+    mt = my_fontinc.render(m, True, Black)
+    screen.blit(pt, (37, 52))
+    screen.blit(mt, (97, 54))
 
+    screen.blit(pt, (37, 122))
+    screen.blit(mt, (97, 124))
+
+    screen.blit(pt, (37, 192))
+    screen.blit(mt, (97, 194))
 #functions
 def TextMake():
     heightmax = (Vo * np.sin(thetao)) ** 2 / (2 * g)
@@ -99,8 +113,6 @@ def TextMake():
     cheatst = f"Aim Assist (half points) = {cheats:}"
     shotst = f"Shots Left = {shots:.0f}"
 
-    p = "+"
-    m = "-"
     #make text
     TextSurfaceG = my_font.render(gt, True, Black)
     TextSurfaceVo = my_font.render(Vot, True, Black)
@@ -117,9 +129,6 @@ def TextMake():
     TextSurfaceRestart = my_font.render(restart, True, White)
     TextSurfacecheat = my_font.render(cheatst, True, White)
     TextSurfaceshots = my_fontinc.render(shotst, True, Yellow)
-
-    pt = my_fontinc.render(p, True, Black)
-    mt = my_fontinc.render(m, True, Black)
 
     #drawtext
     screen.blit(TextSurfaceG, (25, 25))
@@ -139,17 +148,6 @@ def TextMake():
     screen.blit(TextSurfaceStart, (75, 314))
     screen.blit(TextSurfaceRestart, (63, 390))
     screen.blit(TextSurfacecheat, (37, 627))
-
-    screen.blit(pt, (37, 52))
-    screen.blit(mt, (97, 54))
-
-    screen.blit(pt, (37, 122))
-    screen.blit(mt, (97, 124))
-
-    screen.blit(pt, (37, 192))
-    screen.blit(mt, (97, 194))
-
-
 #create Rects
 gButtonp = pg.Rect(25, 55, 45, 35)
 gButtonm = pg.Rect(80, 55, 45, 35)
@@ -197,14 +195,6 @@ def thetaom():
 def elCreato():
     pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
     pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
-
-    pg.draw.rect(screen, Green, VoButtonp)
-    pg.draw.rect(screen, Green, ThetaoButtonp)
-    pg.draw.rect(screen, Green, gButtonp)
-
-    pg.draw.rect(screen, Red, VoButtonm)
-    pg.draw.rect(screen, Red, ThetaoButtonm)
-    pg.draw.rect(screen, Red, gButtonm)
 
 def Target():
     ellipse_rect3 = pg.Rect(Ellx, Elly, 200, 35)
@@ -298,6 +288,14 @@ def Playagaintext():
     screen.blit(textSurfacegameover, gameover_rect)
     screen.blit(textSurfacefinalscore, score_rect)
     screen.blit(textSurfaceplayagain, playagain_rect)
+def drawrectgrey():
+    pg.draw.rect(screen, CheatGrey, VoButtonp)
+    pg.draw.rect(screen, CheatGrey, ThetaoButtonp)
+    pg.draw.rect(screen, CheatGrey, gButtonp)
+
+    pg.draw.rect(screen, CheatGrey, VoButtonm)
+    pg.draw.rect(screen, CheatGrey, ThetaoButtonm)
+    pg.draw.rect(screen, CheatGrey, gButtonm)
 
 while running:
     #loops
@@ -386,6 +384,7 @@ while running:
 
         handle_start(StartButton, Fire)
         TextMake()
+        plusMinusMake()
         pg.display.flip()
     while Shoot:
         dt = clock.tick(fps) / 1000.0
@@ -422,6 +421,7 @@ while running:
         angleLine()
         parabola()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
+        drawrectgrey()
         TextMake()
 
         # better landing condition
@@ -481,6 +481,7 @@ while running:
         pg.draw.rect(screen, Blue, StartButton)
         pg.draw.rect(screen, StartGreen, EndButton, border_radius=12)
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
+        drawrectgrey()
         TextMake()
 
         pg.display.flip()
