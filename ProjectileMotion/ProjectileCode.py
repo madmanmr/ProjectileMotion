@@ -33,6 +33,7 @@ End = False
 prevMouseClick = False
 cheats = False
 GameOver = False
+hit_registered = False
 pg.display.set_caption("Projectile Motion Game")
 #colours
 Red = (220, 70, 80)
@@ -120,13 +121,14 @@ def Fire():
         Shoot = True
         shots -= 1
 def New():
-    global End, VarChoice, t, Ellx, points, pointsold, cheats
+    global End, VarChoice, t, Ellx, points, pointsold, cheats, hit_registered
     VarChoice = True
     End = False
     cheats = False
     t = 0
     Ellx = np.random.randint(400, 1000)
     pointsold = points
+    hit_registered = False
 def handle_cheat(rect, action):
     global cheats, cheatbcol
     if cheats == True:
@@ -168,25 +170,23 @@ def Target():
 
     return ellipse_rect1, ellipse_rect2, ellipse_rect3
 def splash(ellipse_rect1, ellipse_rect2, ellipse_rect3):
-    global points, pointsold
-    Splashfx = pg.Rect(xpres - 25, ypres-3, 50, 6)
+    global points, hit_registered
+
+    Splashfx = pg.Rect(xpres - 25, ypres - 3, 50, 6)
     pg.draw.ellipse(screen, Yellow, Splashfx)
 
-    if ellipse_rect1.colliderect(Splashfx) and points == pointsold:
-        if cheats == True:
-            points += 25
-        else:
-            points += 50
-    elif ellipse_rect2.colliderect(Splashfx) and points == pointsold:
-        if cheats == True:
-            points += 15
-        else:
-            points += 30
-    elif ellipse_rect3.colliderect(Splashfx) and points == pointsold:
-        if cheats == True:
-            points += 5
-        else:
-            points += 10
+    if hit_registered == False:
+        if ellipse_rect1.colliderect(Splashfx):
+            points += 25 if cheats else 50
+            hit_registered = True
+
+        elif ellipse_rect2.colliderect(Splashfx):
+            points += 15 if cheats else 30
+            hit_registered = True
+
+        elif ellipse_rect3.colliderect(Splashfx):
+            points += 5 if cheats else 10
+            hit_registered = True
 def parabola():
     if cheats == True:
         points = []
@@ -210,7 +210,7 @@ def CheatsFunc():
     cheats = True
     cheatbcol = Green
 def PlayAgainfunc():
-    global VarChoice, GameOver, shots, points, pointsold, cheats, cheatbcol, Ellx, t, g, Vo, thetao, speed
+    global VarChoice, GameOver, shots, points, pointsold, cheats, cheatbcol, Ellx, t, g, Vo, thetao, speed, hit_registered
 
     GameOver = False
     VarChoice = True
@@ -226,6 +226,7 @@ def PlayAgainfunc():
     Vo = 20
     thetao = np.radians(45)
     speed = 0
+    hit_registered = False
 def handleAgain(rect, action):
     color = StartGreen
     if rect.collidepoint(mousePos):
@@ -273,9 +274,10 @@ def elCreato():
     x3 = x1 + (l * np.cos(thetao))
     pg.draw.line(screen, darkGreen, (x1, y1), (x3, y3), 4)
 
-    parabola()
     Target()
+    parabola()
 
+def elCreatoText():
     heightmax = (Vo * np.sin(thetao)) ** 2 / (2 * g)
     gt = f"Gravity Value = {g:.2f}"
     Vot = f"Initial Velocity = {Vo:.1f} m/s"
@@ -371,7 +373,8 @@ while running:
         #drawloop
         elCreato()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
-        #plusminustext
+        #text
+        elCreatoText()
         plusMinusMake()
         pg.display.flip()
     while Shoot:
@@ -406,6 +409,7 @@ while running:
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         drawrectgrey()
         elCreato()
+        elCreatoText()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
 
         # better landing condition
@@ -439,14 +443,19 @@ while running:
         heightpres = int(np.round((y1 - ypres) / SCALE))
         thetapres = int(np.round(thetapres))
 
-        handle_button(EndButton, New, StartGreen, StartGreenDark, 12)
+        ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
+        elCreato()
+        splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
+
+        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
+
+        drawrectgrey()
         pg.draw.rect(screen, Blue, StartButton)
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
-        drawrectgrey()
-        elCreato()
-        ellipse_rect1, ellipse_rect2, ellipse_rect3 = Target()
-        splash(ellipse_rect1, ellipse_rect2, ellipse_rect3)
-        pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
+        handle_button(EndButton, New, StartGreen, StartGreenDark, 12)
+
+        plusMinusMake()
+        elCreatoText()
 
         pg.display.flip()
 
