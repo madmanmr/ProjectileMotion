@@ -31,16 +31,21 @@ prevMouseClick = False
 cheats = False
 
 #colours
-Red = (255, 0, 0)
-Green = (0, 255, 0)
-Blue = (0, 0, 255)
-White = (255, 255, 255)
-Black = (0, 0, 0)
-darkGreen = (0,200,0)
-darkRed = (200,0,0)
-darkBlue = (0,0,200)
-Yellow = (255,200,40)
-darkYellow = (220,180,20)
+Red = (220, 70, 80)
+Green = (80, 190, 130)
+Blue = (65, 125, 215)
+White = (242, 246, 250)
+Black = (25, 30, 40)
+darkGreen = (45, 145, 95)
+darkRed = (170, 45, 55)
+darkBlue = (40, 85, 165)
+Yellow = (255, 205, 65)
+darkYellow = (210, 155, 30)
+StartGreen = (60, 200, 110)
+StartGreenDark = (40, 160, 85)
+CheatGrey = (110, 120, 140)
+CheatGreyDark = (80, 90, 110)
+cheatbcol = CheatGrey
 
 #math vars
 SCALE = 10# 10 pixels=1m
@@ -63,6 +68,7 @@ pointsold = 0
 Ellx = np.random.randint(400, 1000)
 Elly = y1 - 17.5
 count = 1
+shots = 5
 
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
@@ -85,7 +91,8 @@ def TextMake():
 
     start = "Start"
     restart = "Restart"
-    cheatst = f"Show trajectory (half points) = {cheats:}"
+    cheatst = f"Aim Assist (half points) = {cheats:}"
+    shotst = f"Shots Left = {shots:.0f}"
 
     p = "+"
     m = "-"
@@ -101,58 +108,67 @@ def TextMake():
     TextSurfacespeed = my_font.render(Speed, True, Black)
     TextSurfacepointst = my_fontinc.render(pointst, True, Yellow)
 
-    TextSurfaceStart = my_font.render(start, True, Green)
-    TextSurfaceRestart = my_font.render(restart, True, Red)
-    TextSurfacecheat = my_font.render(cheatst, True, darkRed)
+    TextSurfaceStart = my_font.render(start, True, White)
+    TextSurfaceRestart = my_font.render(restart, True, White)
+    TextSurfacecheat = my_font.render(cheatst, True, White)
+    TextSurfaceshots = my_fontinc.render(shotst, True, Yellow)
 
     pt = my_fontinc.render(p, True, Black)
     mt = my_fontinc.render(m, True, Black)
 
     #drawtext
-    screen.blit(TextSurfaceG, (10, 10))
-    screen.blit(TextSurfaceVo, (10, 70))
-    screen.blit(TextSurfaceThetao, (10, 130))
-    screen.blit(TextSurfacedPres, (500,10))
-    screen.blit(TextSurfacehPres, (500, 50))
-    screen.blit(TextSurfaceThetaprest, (500, 90))
-    screen.blit(TextSurfaceheightmaxt, (800, 10))
-    screen.blit(TextSurfacett, (500, 170))
-    screen.blit(TextSurfacespeed, (500, 130))
-    screen.blit(TextSurfacepointst, (800, 50))
+    screen.blit(TextSurfaceG, (25, 25))
+    screen.blit(TextSurfaceVo, (25, 95))
+    screen.blit(TextSurfaceThetao, (25, 165))
 
-    screen.blit(TextSurfaceStart, (10, 220))
-    screen.blit(TextSurfaceRestart, (10, 370))
-    screen.blit(TextSurfacecheat, (10, 550))
+    screen.blit(TextSurfacedPres, (430, 20))
+    screen.blit(TextSurfacehPres, (430, 55))
+    screen.blit(TextSurfaceThetaprest, (430, 90))
+    screen.blit(TextSurfaceheightmaxt, (430, 125))
+    screen.blit(TextSurfacespeed, (430, 160))
+    screen.blit(TextSurfacett, (430, 195))
 
-    screen.blit(pt, (25, 30))
-    screen.blit(pt, (25, 90))
-    screen.blit(pt, (25, 150))
-    screen.blit(mt, (89, 32))
-    screen.blit(mt, (89, 92))
-    screen.blit(mt, (89, 152))
+    screen.blit(TextSurfacepointst, (1030, 25))
+    screen.blit(TextSurfaceshots, (1030, 85))
+
+    screen.blit(TextSurfaceStart, (75, 314))
+    screen.blit(TextSurfaceRestart, (63, 390))
+    screen.blit(TextSurfacecheat, (37, 627))
+
+    screen.blit(pt, (37, 52))
+    screen.blit(mt, (97, 54))
+
+    screen.blit(pt, (37, 122))
+    screen.blit(mt, (97, 124))
+
+    screen.blit(pt, (37, 192))
+    screen.blit(mt, (97, 194))
 
 
 #create Rects
-gButtonp = pg.Rect(10, 30, 50, 40)
-VoButtonp = pg.Rect(10, 90, 50, 40)
-ThetaoButtonp = pg.Rect(10, 150, 50, 40)
+gButtonp = pg.Rect(25, 55, 45, 35)
+gButtonm = pg.Rect(80, 55, 45, 35)
 
-gButtonm = pg.Rect(70, 30, 50, 40)
-VoButtonm = pg.Rect(70, 90, 50, 40)
-ThetaoButtonm = pg.Rect(70, 150, 50, 40)
+VoButtonp = pg.Rect(25, 125, 45, 35)
+VoButtonm = pg.Rect(80, 125, 45, 35)
 
-StartButton = pg.Rect(10, 250, 100, 100)
-EndButton = pg.Rect(10, 400, 100, 100)
+ThetaoButtonp = pg.Rect(25, 195, 45, 35)
+ThetaoButtonm = pg.Rect(80, 195, 45, 35)
 
-cheatButton = pg.Rect(10, 580, 100, 100)
+StartButton = pg.Rect(25, 295, 150, 60)
+EndButton = pg.Rect(25, 370, 150, 60)
+
+cheatButton = pg.Rect(25, 610, 340, 55)
 #funcs
 def Fire():
-    global VarChoice, Shoot, t, ypres, xpres
-    t = 0
-    ypres = y1
-    xpres = x1
-    VarChoice = False
-    Shoot = True
+    global VarChoice, Shoot, t, ypres, xpres, shots
+    if shots > 0:
+        t = 0
+        ypres = y1
+        xpres = x1
+        VarChoice = False
+        Shoot = True
+        shots -= 1
 def Vop():
     global Vo
     Vo = min(40, Vo +1)
@@ -183,8 +199,6 @@ def elCreato():
     pg.draw.rect(screen, Red, ThetaoButtonm)
     pg.draw.rect(screen, Red, gButtonm)
 
-    pg.draw.rect(screen, Blue, StartButton)
-    pg.draw.rect(screen, Blue, EndButton)
 def Target():
     ellipse_rect3 = pg.Rect(Ellx, Elly, 200, 35)
     ellipse_rect2 = pg.Rect(Ellx + 30, Elly + 7.5, 140, 20)
@@ -240,12 +254,9 @@ def parabola():
         if len(points) > 1:
             pg.draw.lines(screen, darkRed, False, points, 3)
 def CheatsFunc():
-    global count, cheats
-    count = count * -1
-    if  count == -1:
-        cheats = True
-    else:
-        cheats = False
+    global cheats, cheatbcol
+    cheats = True
+    cheatbcol = Green
 while running:
     #loops
     while VarChoice:
@@ -285,20 +296,25 @@ while running:
                 if mousePress:
                     action()
             pg.draw.rect(screen, color, rect)
-        def handle_buttonS(rect, action):
-            color = Blue
+        def handle_start(rect, action):
+            color = StartGreen
             if rect.collidepoint(mousePos):
-                color = darkBlue
+                color = StartGreenDark
                 if mousePress:
                     action()
-            pg.draw.rect(screen, color, rect)
-        def handle_buttonc(rect, action):
-            color = Red
+            pg.draw.rect(screen, color, rect, border_radius=12)
+        def handle_cheat(rect, action):
+            global cheats, cheatbcol
+            if cheats == True:
+                cheatbcol = Green
+            else:
+                cheatbcol = CheatGrey
+            color = cheatbcol
             if rect.collidepoint(mousePos):
-                color = darkRed
+                color = Green
                 if mousePress:
                     action()
-            pg.draw.rect(screen, color, rect)
+            pg.draw.rect(screen, color, rect, border_radius=12)
 
         #draw
         handle_buttonG(VoButtonp, Vop)
@@ -309,7 +325,7 @@ while running:
         handle_buttonR(gButtonm, Gm)
         handle_buttonR(ThetaoButtonm, thetaom)
 
-        handle_buttonc(cheatButton, CheatsFunc)
+        handle_cheat(cheatButton, CheatsFunc)
 
         pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
         pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
@@ -322,7 +338,7 @@ while running:
         angleLine()
         parabola()
 
-        handle_buttonS(StartButton, Fire)
+        handle_start(StartButton, Fire)
         TextMake()
         pg.display.flip()
     while Shoot:
@@ -353,6 +369,9 @@ while running:
         heightpres = (y1 - ypres) / SCALE
 
         elCreato()
+        pg.draw.rect(screen, Blue, StartButton)
+        pg.draw.rect(screen, Blue, EndButton)
+        pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         Target()
         angleLine()
         parabola()
@@ -382,18 +401,18 @@ while running:
                 End = False
 
         screen.fill(White)
-        def handle_buttonS(rect, action):
-            color = Blue
+        def handle_restart(rect, action):
+            color = StartGreen
             if rect.collidepoint(mousePos):
-                color = darkBlue
+                color = StartGreenDark
                 if mousePress:
                     action()
-            pg.draw.rect(screen, color, rect)
-
+            pg.draw.rect(screen, color, rect, border_radius=12)
         def New():
-            global End, VarChoice, t, Ellx, points, pointsold
+            global End, VarChoice, t, Ellx, points, pointsold, cheats
             VarChoice = True
             End = False
+            cheats = False
             t = 0
             Ellx = np.random.randint(400, 1000)
             pointsold = points
@@ -412,8 +431,10 @@ while running:
         parabola()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 5)
 
-        pg.draw.rect(screen, Blue, EndButton)
-        handle_buttonS(EndButton, New)
+        handle_restart(EndButton, New)
+        pg.draw.rect(screen, Blue, StartButton)
+        pg.draw.rect(screen, StartGreen, EndButton, border_radius=12)
+        pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         TextMake()
 
         pg.display.flip()
