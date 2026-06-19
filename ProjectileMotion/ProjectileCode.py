@@ -29,7 +29,8 @@ Shoot = False
 End = False
 prevMouseClick = False
 cheats = False
-
+GameOver = False
+pg.display.set_caption("Projectile Motion Game")
 #colours
 Red = (220, 70, 80)
 Green = (80, 190, 130)
@@ -70,9 +71,13 @@ Elly = y1 - 17.5
 count = 1
 shots = 5
 
+#restart button
+size = [500,200]
+
 #make text
 my_font = pg.font.SysFont(pg.font.get_default_font(), 30)
 my_fontinc = pg.font.SysFont(pg.font.get_default_font(), 50)
+my_fontbig = pg.font.SysFont(pg.font.get_default_font(), 80)
 
 #functions
 def TextMake():
@@ -159,6 +164,8 @@ StartButton = pg.Rect(25, 295, 150, 60)
 EndButton = pg.Rect(25, 370, 150, 60)
 
 cheatButton = pg.Rect(25, 610, 340, 55)
+
+Newgamebutton = pg.Rect(SCREEN_WIDTH/2 - size[0]/2, SCREEN_HEIGHT/2 - size[1]/2 + 100, size[0], size[1])
 #funcs
 def Fire():
     global VarChoice, Shoot, t, ypres, xpres, shots
@@ -257,6 +264,41 @@ def CheatsFunc():
     global cheats, cheatbcol
     cheats = True
     cheatbcol = Green
+def PlayAgainfunc():
+    global VarChoice, GameOver, shots, points, pointsold, cheats, cheatbcol, Ellx, t, g, Vo, thetao, speed
+
+    GameOver = False
+    VarChoice = True
+
+    shots = 5
+    points = 0
+    pointsold = 0
+    cheats = False
+    cheatbcol = CheatGrey
+    Ellx = np.random.randint(400, 1000)
+    t = 0
+    g = 9.81
+    Vo = 20
+    thetao = np.radians(45)
+    speed = 0
+def Playagaintext():
+    gameovert = "Game Over!"
+    playagaint = "Play Again"
+    finalscore = f"Final Score: {points}"
+
+    textSurfacegameover = my_fontbig.render(gameovert, True, Black)
+    textSurfaceplayagain = my_fontbig.render(playagaint, True, White)
+    textSurfacefinalscore = my_fontbig.render(finalscore, True, darkYellow)
+
+    # centered positions
+    gameover_rect = textSurfacegameover.get_rect(center=(SCREEN_WIDTH // 2, 140))
+    score_rect = textSurfacefinalscore.get_rect(center=(SCREEN_WIDTH // 2, 260))
+    playagain_rect = textSurfaceplayagain.get_rect(center=Newgamebutton.center)
+
+    screen.blit(textSurfacegameover, gameover_rect)
+    screen.blit(textSurfacefinalscore, score_rect)
+    screen.blit(textSurfaceplayagain, playagain_rect)
+
 while running:
     #loops
     while VarChoice:
@@ -280,7 +322,11 @@ while running:
         heightpres = 0
         thetapres = np.degrees(thetao)
         heightmax = 0
-
+        if shots == 0:
+            VarChoice = False
+            Shoot = False
+            End = False
+            GameOver = True
         #buttons
         def handle_buttonG(rect, action):
             color = Green
@@ -329,13 +375,13 @@ while running:
 
         pg.draw.line(screen, Black, (x1, y1), (x1 + 1000, y1), 5)
         pg.draw.line(screen, Black, (x1, y1), (x1, y1 - 300), 5)
+        angleLine()
         pg.draw.circle(screen, Yellow, (int(xpres), int(ypres)), 10)
 
         pg.draw.rect(screen, Blue, EndButton)
 
         Target()
 
-        angleLine()
         parabola()
 
         handle_start(StartButton, Fire)
@@ -436,6 +482,36 @@ while running:
         pg.draw.rect(screen, StartGreen, EndButton, border_radius=12)
         pg.draw.rect(screen, cheatbcol, cheatButton, border_radius=12)
         TextMake()
+
+        pg.display.flip()
+
+    while GameOver:
+        mousePos = pg.mouse.get_pos()
+        mouseClick = pg.mouse.get_pressed()[0]
+        mousePress = mouseClick and not prevMouseClick
+        prevMouseClick = mouseClick
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                VarChoice = False
+                Shoot = False
+                End = False
+                GameOver = False
+
+        screen.fill(White)
+
+        def handleAgain(rect, action):
+            color = StartGreen
+            if rect.collidepoint(mousePos):
+                color = StartGreenDark
+                if mousePress:
+                    action()
+            pg.draw.rect(screen, color, rect, border_radius=20)
+
+
+        handleAgain(Newgamebutton, PlayAgainfunc)
+        Playagaintext()
+
 
         pg.display.flip()
 pygame.quit()
