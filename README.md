@@ -6,28 +6,6 @@ The project started as a projectile motion simulator and later evolved into a ga
 
 ---
 
-## Features
-
-- Real-time projectile motion simulation
-- Adjustable:
-  - Gravity
-  - Initial velocity
-  - Launch angle
-- Displays:
-  - Distance travelled
-  - Height
-  - Speed
-  - Flight time
-  - Maximum height
-- Random target generation
-- Scoring system
-- Limited shots
-- Aim Assist mode
-- Game Over screen
-- Restart functionality
-
----
-
 ## Controls
 
 ### Variable Controls
