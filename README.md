@@ -175,6 +175,10 @@ T = (2v₀ sin(θ)) / g
 ## Final Thoughts
 
 Write a short reflection here about what went well, what was difficult, and what you would improve if you rebuilt the project.
+This was my second python project and I really enjoyed making more of a game with it. I found using the basic pygame quite simple as I had previously used pygame.
+The scale factor to convert pixels to metres and clock to get all the statistics accurate were a struggle. My code layout was an improvement to my last project however,
+I could make the code much smaller and more efficient. I will try to write a proper plan of my next project on paper before I start coding it to help get the layout right.
+Overall I really enjoyed making this game and I would recommend making physics simulations in python. Hope you enjoy my game :)
 
 
 
